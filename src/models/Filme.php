@@ -1,5 +1,4 @@
 <?php
-
 namespace src\models;
 
 use core\Database;
@@ -9,53 +8,74 @@ use PDOException;
 
 class Filme extends Model {
     public function getFilmesFromDatabase() {
-        // Consulta SQL
-        $sql = "SELECT id, titulo FROM filmes";
+        $sql = "SELECT id, titulo, sinopse, trailer, capa, categoria FROM filmes";
 
         try {
-            // Obtém a instância do PDO usando a classe Database
             $pdo = Database::getInstance();
-
-            // Executa a consulta
             $result = $pdo->query($sql);
 
-            // Verifica se a consulta retornou dados
             if ($result && $result->rowCount() > 0) {
-                return $result->fetchAll(PDO::FETCH_ASSOC); // Retorna os dados como um array associativo
+                $filmes = $result->fetchAll(PDO::FETCH_ASSOC);
+
+                // Adiciona o caminho completo das imagens
+                foreach ($filmes as &$filme) {
+                    $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
+                }
+
+                return $filmes;
             } else {
-                return []; // Retorna um array vazio se não houver dados
+                return [];
             }
         } catch (PDOException $e) {
-            // Captura e exibe erros do PDO
             die("Erro na consulta ao banco de dados: " . $e->getMessage());
         }
     }
 
-    public function inserirFilme($titulo) {
-        $sql = "INSERT INTO filmes (titulo) VALUES (:titulo)";
-    
+    public function inserirFilme($titulo, $sinopse, $trailer, $capa, $categoria) {
+        $sql = "INSERT INTO filmes (titulo, sinopse, trailer, capa, categoria) VALUES (:titulo, :sinopse, :trailer, :capa, :categoria)";
+
         try {
             $pdo = Database::getInstance();
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':titulo', $titulo, PDO::PARAM_STR);
+            $stmt->bindValue(':sinopse', $sinopse, PDO::PARAM_STR);
+            $stmt->bindValue(':trailer', $trailer, PDO::PARAM_STR);
+            $stmt->bindValue(':capa', $capa, PDO::PARAM_STR);
+            $stmt->bindValue(':categoria', $categoria, PDO::PARAM_STR);
             return $stmt->execute();
         } catch (PDOException $e) {
             die("Erro ao inserir filme: " . $e->getMessage());
         }
     }
 
+    public function deletarFilme($id) {
+        $sql = "DELETE FROM filmes WHERE id = :id";
 
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            die("Erro ao deletar filme: " . $e->getMessage());
+        }
+    }
 
+    public function atualizarFilme($id, $titulo, $sinopse, $trailer, $capa, $categoria) {
+        $sql = "UPDATE filmes SET titulo = :titulo, sinopse = :sinopse, trailer = :trailer, capa = :capa, categoria = :categoria WHERE id = :id";
 
-
-
-
-
-
-
-
-
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':titulo', $titulo, PDO::PARAM_STR);
+            $stmt->bindValue(':sinopse', $sinopse, PDO::PARAM_STR);
+            $stmt->bindValue(':trailer', $trailer, PDO::PARAM_STR);
+            $stmt->bindValue(':capa', $capa, PDO::PARAM_STR);
+            $stmt->bindValue(':categoria', $categoria, PDO::PARAM_STR);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            die("Erro ao atualizar filme: " . $e->getMessage());
+        }
+    }
 }
-
-
-
