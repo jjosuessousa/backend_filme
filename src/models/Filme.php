@@ -33,7 +33,7 @@ class Filme extends Model {
 
     public function inserirFilme($titulo, $sinopse, $trailer, $capa, $categoria) {
         $sql = "INSERT INTO filmes (titulo, sinopse, trailer, capa, categoria) VALUES (:titulo, :sinopse, :trailer, :capa, :categoria)";
-
+    
         try {
             $pdo = Database::getInstance();
             $stmt = $pdo->prepare($sql);
@@ -44,20 +44,38 @@ class Filme extends Model {
             $stmt->bindValue(':categoria', $categoria, PDO::PARAM_STR);
             return $stmt->execute();
         } catch (PDOException $e) {
-            die("Erro ao inserir filme: " . $e->getMessage());
+            error_log("Erro ao cadastrar filme: " . $e->getMessage());
+            return false;
         }
     }
 
     public function deletarFilme($id) {
         $sql = "DELETE FROM filmes WHERE id = :id";
-
+    
         try {
             $pdo = Database::getInstance();
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            return $stmt->execute();
+            $stmt->execute();
+            return $stmt->rowCount() > 0; // Retorna true se alguma linha foi deletada
         } catch (PDOException $e) {
-            die("Erro ao deletar filme: " . $e->getMessage());
+            error_log("Erro ao deletar filme: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function buscarFilmePorId($id) {
+        $sql = "SELECT * FROM filmes WHERE id = :id";
+    
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC); // Retorna os dados do filme
+        } catch (PDOException $e) {
+            error_log("Erro ao buscar filme: " . $e->getMessage());
+            return false;
         }
     }
 
