@@ -72,7 +72,14 @@ class Filme extends Model {
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC); // Retorna os dados do filme
+            $filme = $stmt->fetch(PDO::FETCH_ASSOC); // Retorna os dados do filme
+    
+            // Adiciona o caminho completo da imagem
+            if ($filme) {
+                $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
+            }
+    
+            return $filme;
         } catch (PDOException $e) {
             error_log("Erro ao buscar filme: " . $e->getMessage());
             return false;
