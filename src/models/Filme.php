@@ -7,15 +7,24 @@ use PDO;
 use PDOException;
 
 class Filme extends Model {
-    public function getFilmesFromDatabase() {
+    public function getFilmesFromDatabase($categoria = null) {
         $sql = "SELECT id, titulo, sinopse, trailer, capa, categoria FROM filmes";
+        if ($categoria) {
+            $sql .= " WHERE categoria = :categoria";
+        }
 
         try {
             $pdo = Database::getInstance();
-            $result = $pdo->query($sql);
+            $stmt = $pdo->prepare($sql);
 
-            if ($result && $result->rowCount() > 0) {
-                $filmes = $result->fetchAll(PDO::FETCH_ASSOC);
+            if ($categoria) {
+                $stmt->bindValue(':categoria', $categoria, PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $filmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 // Adiciona o caminho completo das imagens
                 foreach ($filmes as &$filme) {
@@ -57,7 +66,7 @@ class Filme extends Model {
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->rowCount() > 0; // Retorna true se alguma linha foi deletada
+            return $stmt->rowCount() > 0;
         } catch (PDOException $e) {
             error_log("Erro ao deletar filme: " . $e->getMessage());
             return false;
@@ -72,8 +81,8 @@ class Filme extends Model {
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            $filme = $stmt->fetch(PDO::FETCH_ASSOC); // Retorna os dados do filme
-    
+            $filme = $stmt->fetch(PDO::FETCH_ASSOC);
+
             // Adiciona o caminho completo da imagem
             if ($filme) {
                 $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];

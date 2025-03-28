@@ -33,6 +33,17 @@ switch (true) {
         $homeController->listarFilmes();
         break;
 
+    // Listar filmes por categoria
+    case ($method === 'GET' && preg_match('/\/backend_filme\/public\/filmes\/categoria\/([\w]+)/', $uri, $matches)):
+        $categoria = $matches[1]; // Extrai a categoria da URI
+        $homeController->listarFilmesPorCategoria($categoria);
+        break;
+
+    // Listar categorias
+    case ($method === 'GET' && $uri === '/backend_filme/public/listar-categorias'):
+        $homeController->listarCategorias();
+        break;
+
     // Cadastrar filme (com upload de imagem)
     case ($method === 'POST' && $uri === '/backend_filme/public/cadastrar-filme'):
         $homeController->cadastrarFilme(); // Agora o método lida com FormData
@@ -53,8 +64,7 @@ switch (true) {
     // Atualizar filme
     case ($method === 'PUT' && preg_match('/\/backend_filme\/public\/atualizar-filme\/(\d+)/', $uri, $matches)):
         $id = $matches[1]; // Extrai o ID da URI
-        $data = json_decode(file_get_contents('php://input'), true);
-        $homeController->atualizarFilme($id, $data);
+        $homeController->atualizarFilme($id);
         break;
 
     // Rota não encontrada
