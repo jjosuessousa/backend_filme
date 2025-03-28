@@ -3,27 +3,30 @@ session_start();
 require '../vendor/autoload.php';
 require '../src/routes.php';
 
-// Configurações de CORS (permitir requisições de qualquer origem)
+// Configurações de CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Content-Type: application/json");
 
-// Se a requisição for do tipo OPTIONS, finaliza o script (pré-requisições CORS)
+// Pré-requisições CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-// Extrai o método HTTP e a URI da requisição
+// Extrai método e URI
 $method = $_SERVER['REQUEST_METHOD'];
-$uri = $_SERVER['REQUEST_URI'];
+$uri = rawurldecode($_SERVER['REQUEST_URI']); // Decodifica a URI
 
-// Instancia o HomeController
+// Log para debug (remova em produção)
+error_log("Requisição recebida: $method $uri");
+
+// Instancia o Controller
 $homeController = new \src\controllers\HomeController();
 
-// Roteamento manual para as requisições
+// Roteamento
 switch (true) {
-    // Rota principal (página inicial)
+    // Rota principal
     case ($method === 'GET' && $uri === '/backend_filme/public/'):
         $homeController->index();
         break;
@@ -33,44 +36,59 @@ switch (true) {
         $homeController->listarFilmes();
         break;
 
-    // Listar filmes por categoria
-    case ($method === 'GET' && preg_match('/\/backend_filme\/public\/filmes\/categoria\/([\w]+)/', $uri, $matches)):
-        $categoria = $matches[1]; // Extrai a categoria da URI
+    // Listar filmes por categoria (rota atualizada)
+    case ($method === 'GET' && preg_match('%^/backend_filme/public/filmes/categoria/([^/]+)$%i', $uri, $matches)):
+        $categoria = rawurldecode($matches[1]);
+        error_log("Categoria solicitada: " . $categoria);
         $homeController->listarFilmesPorCategoria($categoria);
         break;
 
-    // Listar categorias
-    case ($method === 'GET' && $uri === '/backend_filme/public/listar-categorias'):
+    // Listar categorias (rota padronizada)
+    case ($method === 'GET' && $uri === '/backend_filme/public/categorias'):
+        error_log("Listando categorias");
         $homeController->listarCategorias();
         break;
 
-    // Cadastrar filme (com upload de imagem)
+    // Cadastrar filme
     case ($method === 'POST' && $uri === '/backend_filme/public/cadastrar-filme'):
-        $homeController->cadastrarFilme(); // Agora o método lida com FormData
+        $homeController->cadastrarFilme();
         break;
 
     // Buscar filme por ID
-    case ($method === 'GET' && preg_match('/\/backend_filme\/public\/filme\/(\d+)/', $uri, $matches)):
-        $id = $matches[1]; // Extrai o ID da URI
+    case ($method === 'GET' && preg_match('%^/backend_filme/public/filme/(\d+)$%', $uri, $matches)):
+        $id = (int)$matches[1];
         $homeController->buscarFilme($id);
         break;
 
     // Deletar filme
-    case ($method === 'DELETE' && preg_match('/\/backend_filme\/public\/deletar-filme\/(\d+)/', $uri, $matches)):
-        $id = $matches[1]; // Extrai o ID da URI
+    case ($method === 'DELETE' && preg_match('%^/backend_filme/public/deletar-filme/(\d+)$%', $uri, $matches)):
+        $id = (int)$matches[1];
         $homeController->deletarFilme($id);
         break;
 
     // Atualizar filme
-    case ($method === 'PUT' && preg_match('/\/backend_filme\/public\/atualizar-filme\/(\d+)/', $uri, $matches)):
-        $id = $matches[1]; // Extrai o ID da URI
+    case ($method === 'PUT' && preg_match('%^/backend_filme/public/atualizar-filme/(\d+)$%', $uri, $matches)):
+        $id = (int)$matches[1];
         $homeController->atualizarFilme($id);
         break;
 
     // Rota não encontrada
     default:
+        error_log("Rota não encontrada: $uri");
         header("HTTP/1.1 404 Not Found");
-        echo json_encode(['status' => 'error', 'message' => 'Rota não encontrada.']);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Rota não encontrada',
+            'requested_uri' => $uri,
+            'available_routes' => [
+                '/categorias',
+                '/filmes/categoria/{categoria}',
+                '/listar-filme',
+                '/filme/{id}',
+                '/cadastrar-filme',
+                '/deletar-filme/{id}',
+                '/atualizar-filme/{id}'
+            ]
+        ]);
         break;
 }
-?>
