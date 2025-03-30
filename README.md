@@ -40,13 +40,13 @@ Passo a Passo
 Clone o repositório:
 
 bash
-Copy
+
 git clone https://github.com/jjosuessousa/backend_filme.git
 cd backend_filme
 Instale as dependências:
 
 bash
-Copy
+
 composer install
 Configure o banco de dados:
 
@@ -57,10 +57,11 @@ Importe a estrutura do banco (schema.sql)
 Inicie o servidor:
 
 bash
-Copy
+
 php -S localhost:8000 -t public
 🏗 Estrutura do Projeto
-Copy
+
+
 backend_filme/
 ├── core/
 │   ├── Model.php          # Classe modelo base
@@ -77,6 +78,8 @@ backend_filme/
 ├── routes/
 │   └── web.php           # Definição de rotas
 └── config/               # Configurações
+
+
 🌐 Rotas da API
 Método	Rota	Descrição	Parâmetros
 GET	/	Página inicial	-
@@ -85,10 +88,10 @@ GET	/filmes/categoria/{categoria}	Filmes por categoria	Nome categoria
 POST	/cadastrar-Filme	Criar novo filme	JSON com dados
 PUT	/atualizar-filme/{id}	Atualizar filme	ID + JSON
 DELETE	/deletar-filme/{id}	Remover filme	ID do filme
+
 🧩 Exemplo de Uso
 Model Filme
-php
-Copy
+
 class Filme extends Model {
     protected static $table = 'filmes';
     
@@ -100,8 +103,7 @@ class Filme extends Model {
     }
 }
 Controller
-php
-Copy
+
 class HomeController extends Controller {
     public function buscarFilme($id) {
         $filme = Filme::find($id);
@@ -109,20 +111,18 @@ class HomeController extends Controller {
     }
 }
 Rotas
-php
-Copy
+
 $router->get('/filme/{id}', 'HomeController@buscarFilme');
 $router->get('/filmes/categoria/{categoria}', 'HomeController@listarPorCategoria');
 🔧 Configurações Especiais
 CORS (index.php)
-php
-Copy
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 .htaccess
 apache
-Copy
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php [QSA,L]
