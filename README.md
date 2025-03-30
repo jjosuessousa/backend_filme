@@ -141,4 +141,8 @@ Abra um Pull Request
 MIT License - Veja o arquivo LICENSE para detalhes.
 
 Desenvolvido por Josué Sousa
+<<<<<<< HEAD
 Repositório: github.com/jjosuessousa/backend_filme
+=======
+Repositório: github.com/jjosuessousa/backend_filme
+>>>>>>> f02cd87af50533880f78248653efc5d75757f63b
