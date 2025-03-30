@@ -63,21 +63,21 @@ php -S localhost:8000 -t public
 
 
 backend_filme/
-├── core/
-│   ├── Model.php          # Classe modelo base
-│   ├── Database.php       # Conexão com DB
-│   ├── Router.php         # Gerenciamento de rotas
-│   └── Controller.php     # Controller base
-├── controllers/
-│   └── HomeController.php # Lógica das rotas
-├── models/
-│   └── Filme.php         # Modelo de filmes
-├── public/
-│   ├── index.php         # Ponto de entrada
-│   └── .htaccess         # Configurações Apache
-├── routes/
-│   └── web.php           # Definição de rotas
-└── config/               # Configurações
+     core/
+        Model.php          # Classe modelo base
+   Database.php       # Conexão com DB
+    Router.php         # Gerenciamento de rotas
+   Controller.php     # Controller base
+ controllers/
+ HomeController.php # Lógica das rotas
+ models/
+ Filme.php         # Modelo de filmes
+public/
+ index.php         # Ponto de entrada
+ .htaccess         # Configurações Apache
+ routes/
+ web.php           # Definição de rotas
+config/               # Configurações
 
 
 🌐 Rotas da API
