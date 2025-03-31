@@ -42,7 +42,8 @@ Composer
 
 Apache/Nginx
 
-Passo a Passo
+Passo a Passo:
+
 Clone o repositório:
 
 bash
@@ -52,14 +53,6 @@ git clone https://github.com/jjosuessousa/backend_filme.git
 cd backend_filme
 Instale as dependências:
 
-bash
-
-composer install
-Configure o banco de dados:
-
-Crie um arquivo .env baseado em .env.example
-
-Importe a estrutura do banco (schema.sql)
 
 Inicie o servidor:
 
@@ -67,43 +60,12 @@ bash
 
 php -S localhost:8000 -t public
 
-🏗 Estrutura do Projeto:
+Vá até a pasta do projeto, pelo prompt/terminal e execute:
 
-backend_filme/
-<<<<<<< HEAD
-=======
-     core/
-        Model.php          # Classe modelo base
-   Database.php       # Conexão com DB
-    Router.php         # Gerenciamento de rotas
-   Controller.php     # Controller base
- controllers/
- HomeController.php # Lógica das rotas
- models/
- Filme.php         # Modelo de filmes
-public/
- index.php         # Ponto de entrada
- .htaccess         # Configurações Apache
- routes/
- web.php           # Definição de rotas
-config/               # Configurações
->>>>>>> c0f638a25a2e419cc1c5320cc4fff6f8c8dc277a
+composer install
 
-          core/
-             Model.php       # Classe modelo
-             Database.php    # Conexão com DB
-              Router.php     #Lógica das rotas
-              Controller.php  # Lógica das cont
-
-    models/
-           Model.php       # Classe modelo    
-    public/
-      index.php         # Ponto de entrada      htaccess          # Configurações 
-
-    routes/
-     Router.php
-    config/               # Configurações
-      config.php
+DENTRO  DA PASTA DO SEU PROJETO ABRA TERMINAL
+ é necessário rodar o composer pra instalar as dependências e gerar o autoload.
 
       
 
