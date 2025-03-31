@@ -70,6 +70,24 @@ php -S localhost:8000 -t public
 🏗 Estrutura do Projeto:
 
 backend_filme/
+<<<<<<< HEAD
+=======
+     core/
+        Model.php          # Classe modelo base
+   Database.php       # Conexão com DB
+    Router.php         # Gerenciamento de rotas
+   Controller.php     # Controller base
+ controllers/
+ HomeController.php # Lógica das rotas
+ models/
+ Filme.php         # Modelo de filmes
+public/
+ index.php         # Ponto de entrada
+ .htaccess         # Configurações Apache
+ routes/
+ web.php           # Definição de rotas
+config/               # Configurações
+>>>>>>> c0f638a25a2e419cc1c5320cc4fff6f8c8dc277a
 
           core/
              Model.php       # Classe modelo
