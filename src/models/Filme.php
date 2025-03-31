@@ -26,7 +26,6 @@ class Filme extends Model {
             if ($stmt->rowCount() > 0) {
                 $filmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                // Adiciona o caminho completo das imagens
                 foreach ($filmes as &$filme) {
                     $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
                 }
@@ -37,6 +36,68 @@ class Filme extends Model {
             }
         } catch (PDOException $e) {
             die("Erro na consulta ao banco de dados: " . $e->getMessage());
+        }
+    }
+
+    public function getFilmesFromDatabaseByTitulo($titulo) {
+        $sql = "SELECT id, titulo, sinopse, trailer, capa, categoria FROM filmes WHERE titulo LIKE :titulo";
+
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':titulo', '%' . $titulo . '%', PDO::PARAM_STR);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $filmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($filmes as &$filme) {
+                    $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
+                }
+
+                return $filmes;
+            } else {
+                return [];
+            }
+        } catch (PDOException $e) {
+            die("Erro na consulta ao banco de dados: " . $e->getMessage());
+        }
+    }
+
+    public function listarCategorias() {
+        $sql = "SELECT DISTINCT categoria FROM filmes";
+
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Erro ao listar categorias: " . $e->getMessage());
+        }
+    }
+
+    public function listarFilmesPorCategoria($categoria) {
+        $sql = "SELECT id, titulo, sinopse, trailer, capa FROM filmes WHERE categoria = :categoria";
+
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':categoria', $categoria, PDO::PARAM_STR);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $filmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($filmes as &$filme) {
+                    $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
+                }
+
+                return $filmes;
+            } else {
+                return [];
+            }
+        } catch (PDOException $e) {
+            die("Erro ao buscar filmes por categoria: " . $e->getMessage());
         }
     }
 
@@ -83,7 +144,6 @@ class Filme extends Model {
             $stmt->execute();
             $filme = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Adiciona o caminho completo da imagem
             if ($filme) {
                 $filme['capa'] = 'http://localhost/backend_filme/uploads/' . $filme['capa'];
             }

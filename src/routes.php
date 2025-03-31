@@ -18,3 +18,4 @@ $router->get('/filme/{id}', 'HomeController@buscarFilme');
 $router->get('/filme/ListarCategorias', 'HomeController@ListarCategorias');
 $router->get('/filmes/categoria/{categoria}', 'HomeController@listarFilmesPorCategoria');
 $router->get('/categorias', 'HomeController@listarCategorias');
+$router->get('/filmes/buscar/{titulo}', 'HomeController@buscarFilmePorTitulo');

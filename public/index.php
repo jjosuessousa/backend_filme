@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 require '../vendor/autoload.php';
 require '../src/routes.php';
@@ -36,16 +36,20 @@ switch (true) {
         $homeController->listarFilmes();
         break;
 
-    // Listar filmes por categoria (rota atualizada)
+    // Listar filmes por categoria
     case ($method === 'GET' && preg_match('%^/backend_filme/public/filmes/categoria/([^/]+)$%i', $uri, $matches)):
         $categoria = rawurldecode($matches[1]);
-        error_log("Categoria solicitada: " . $categoria);
         $homeController->listarFilmesPorCategoria($categoria);
         break;
 
-    // Listar categorias (rota padronizada)
+    // Buscar filme por título
+    case ($method === 'GET' && preg_match('%^/backend_filme/public/filmes/titulo/(.+)$%', $uri, $matches)):
+        $titulo = rawurldecode($matches[1]);
+        $homeController->buscarFilmePorTitulo($titulo);
+        break;
+
+    // Listar categorias
     case ($method === 'GET' && $uri === '/backend_filme/public/categorias'):
-        error_log("Listando categorias");
         $homeController->listarCategorias();
         break;
 
@@ -74,20 +78,21 @@ switch (true) {
 
     // Rota não encontrada
     default:
-        error_log("Rota não encontrada: $uri");
         header("HTTP/1.1 404 Not Found");
         echo json_encode([
             'status' => 'error',
             'message' => 'Rota não encontrada',
             'requested_uri' => $uri,
             'available_routes' => [
-                '/categorias',
-                '/filmes/categoria/{categoria}',
-                '/listar-filme',
-                '/filme/{id}',
-                '/cadastrar-filme',
-                '/deletar-filme/{id}',
-                '/atualizar-filme/{id}'
+                '/backend_filme/public/',
+                '/backend_filme/public/categorias',
+                '/backend_filme/public/filmes/categoria/{categoria}',
+                '/backend_filme/public/listar-filme',
+                '/backend_filme/public/filme/{id}',
+                '/backend_filme/public/filmes/titulo/{titulo}',
+                '/backend_filme/public/cadastrar-filme',
+                '/backend_filme/public/deletar-filme/{id}',
+                '/backend_filme/public/atualizar-filme/{id}'
             ]
         ]);
         break;

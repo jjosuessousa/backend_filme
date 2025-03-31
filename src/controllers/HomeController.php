@@ -10,6 +10,7 @@ class HomeController extends Controller {
     public function index() {
         echo json_encode(['message' => 'Bem-vindo ao backend de filmes!']);
     }
+    
 
     // Listar filmes por categoria
     public function listarFilmesPorCategoria($categoria) {
@@ -19,6 +20,16 @@ class HomeController extends Controller {
         header('Content-Type: application/json');
         echo json_encode($filmes);
     }
+
+    // Buscar filme por título
+public function buscarFilmePorTitulo($titulo) {
+    $filmeModel = new Filme();
+    $filmes = $filmeModel->getFilmesFromDatabaseByTitulo($titulo);
+
+    header('Content-Type: application/json');
+    echo json_encode($filmes);
+}
+
 
     // Listar todas as categorias
     public function listarCategorias() {
